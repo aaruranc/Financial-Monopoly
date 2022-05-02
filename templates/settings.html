@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Financial Monopoly</title>
+        
+        <!-- Import Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        
+        <!-- Import jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
+        <!-- Import JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        
+        <!-- Favicon -->
+        <link rel="icon", href="{{ url_for('static', filename='img/favicon.png') }}" />
+        
+        <!-- Custom CSS -->
+<!--        <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}"/>-->
+        
+        <!-- Custom JS -->
+<!--        <script src="{{ url_for('static', filename='js/settings.js') }}"></script>-->
+    </head>
+    
+    <body>
+    
+        <div id="wrapper">
+        
+            <h1>Financial Monopoly</h1>
+            <br>
+            
+            <h2>Settings</h2>
+            
+            <form name="settings_form" id="settings_form" action="{{ url_for('play') }}" method="post">
+                <label for="initial_capital">Initial Capital</label>
+                <select name="initial_capital" id="initial_capital">
+                    <option value=1000>1000</option>
+                    <option value=1500>1500</option>
+                    <option value=2000>2000</option>
+                    <option value=5000>5000</option>
+                </select>
+                <br>
+                <label for="initial_capital">Auctions</label>
+                <select name = "auction" id="auction">
+                    <option value=1>True</option>
+                    <option value=0>False</option>
+                </select>
+                <br>
+                <label for="go_around">Only Buy After 1 Go Around</label>
+                <select name = "go_around" id="go_around">
+                    <option value=1>True</option>
+                    <option value=0>False</option>
+                </select>
+                <br>
+                <input type="submit">
+            </form>
+            
+            
+            
+            
+        
+        </div>
+        
+        
+    
+    
+    </body>
