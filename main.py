@@ -1,4 +1,7 @@
 import json
+import time
+import requests
+import threading
 import numpy as np
 
 from config import *
@@ -9,6 +12,7 @@ from flask import Flask, request, render_template, jsonify
 np.random.seed(6)
 
 game = Game()
+markets = Markets()
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
@@ -23,7 +27,7 @@ def initialize():
 		# print('yerr')
 		keys = list(request.form.keys())
 
-		print(keys)
+		# print(keys)
 
 		for key in keys:
 			player_dict[int(key)] = Player(request.form[key])
@@ -37,7 +41,7 @@ def initialize():
 def play():
 
 	# Process Settings and Update Player Dict and Game Object
-	print(request.form)
+	# print(request.form)
 	for key in list(request.form.keys()):
 		settings_dict[key] = request.form[key]
 		if key == 'initial_capital':
@@ -86,6 +90,7 @@ def roll():
 	if new_position >= BOARD_SQUARES:
 		new_position = new_position % BOARD_SQUARES
 
+	# Setting internal player position before user notification
 	data['position'] = player.position = new_position
 
 	return jsonify(data)
@@ -95,7 +100,8 @@ def roll():
 def action():
 
 	data = request.get_json()
-	print(data)
+	player_options = game.player_action(data)
+	# return jsonify(player_options)
 
 	# Map current Game State and Player state to potential actions
 	# Leaving blank for now 
@@ -109,12 +115,37 @@ def action():
 	d['player_name'] = player.name
 	d['position'] = player.position
 	d['capital'] = player.capital
-	
+
 	return jsonify(d)	
 
 
+@app.route("/test", methods=['POST'])
+def test():
+
+	return jsonify('YEET')
+
+
+
+def refresh_markets():
+
+	time.sleep(BUFFER_TIME)
+	while 1:
+
+		r = requests.post(f'http://{HOST}:{PORT}/test')
+		# print(r.text)
+
+		time.sleep(REFRESH_TIME)
+
+	return
+
+
+markets_thread = threading.Thread(target=refresh_markets)
+markets_thread.daemon = True
 
 
 if __name__ == '__main__':
 	
-	app.run(debug=True)
+	markets_thread.start()
+	app.run(host=HOST, port=PORT, debug=True)
+	markets_thread.join()
+	
