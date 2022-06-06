@@ -2,7 +2,7 @@ import json
 import time
 import requests
 import threading
-import numpy as np
+
 
 from config import *
 from helper import *
@@ -13,6 +13,7 @@ np.random.seed(6)
 
 game = Game()
 markets = Markets()
+settings = Settings() 
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
@@ -41,12 +42,20 @@ def initialize():
 def play():
 
 	# Process Settings and Update Player Dict and Game Object
+	# Cleaner way to update? (re: auction/go_around)
 	# print(request.form)
 	for key in list(request.form.keys()):
 		settings_dict[key] = request.form[key]
 		if key == 'initial_capital':
 			for pl in player_dict:
 				player_dict[pl].capital = int(request.form[key])
+		elif key == 'auction':
+			settings.auction = request.form[key]
+		elif key == 'go_around':
+			settings.go_around = request.form[key]
+
+	# print(vars(settings))
+
 
 	return render_template('play.html')
 
@@ -56,14 +65,13 @@ def loop():
 
 	
 	data = request.get_json()
-	# print(data)
+	# print('loop', data)
 
 	d = {}
 	if data['state'] == 'not started':
 		curr_player = 0
 
 
-	d = {}	
 	player = player_dict[curr_player]
 	d['current_player'] = curr_player
 	d['player_name'] = player.name
@@ -78,8 +86,7 @@ def loop():
 def roll():
 
 	data = request.get_json()
-	# print(data)
-
+	# print('roll', data)
 
 	player = player_dict[data['current_player']]
 	roll_num = np.random.randint(1, NUM_DICE * DICE_SIDES)
@@ -100,26 +107,45 @@ def roll():
 def action():
 
 	data = request.get_json()
-	player_options = game.player_action(data)
-	# return jsonify(player_options)
+	# print('action', data)
+
+	player_options = game.player_actions(data)
+
+
+	return jsonify(player_options)
 
 	# Map current Game State and Player state to potential actions
 	# Leaving blank for now 
 
+	# next_player = (data['current_player'] + 1 ) % game.num_players
+	# player = player_dict[next_player]
 
-	next_player = (data['current_player'] + 1 ) % game.num_players
-	player = player_dict[next_player]
-
-	d = {}
-	d['current_player'] = next_player
-	d['player_name'] = player.name
-	d['position'] = player.position
-	d['capital'] = player.capital
+	# d = {}
+	# d['current_player'] = next_player
+	# d['player_name'] = player.name
+	# d['position'] = player.position
+	# d['capital'] = player.capital
 
 	return jsonify(d)	
 
 
-@app.route("/test", methods=['POST'])
+@app.route("/decision", methods=['POST'])
+def decision():
+
+	data = request.get_json()
+	# print('decision', data)
+
+	outcome = game.process_decision(data)
+
+	return jsonify(outcome)
+
+	return 
+
+
+
+
+
+@app.route("/markets", methods=['POST'])
 def test():
 
 	return jsonify('YEET')
@@ -131,8 +157,7 @@ def refresh_markets():
 	time.sleep(BUFFER_TIME)
 	while 1:
 
-		r = requests.post(f'http://{HOST}:{PORT}/test')
-		# print(r.text)
+		r = requests.post(f'http://{HOST}:{PORT}/markets')
 
 		time.sleep(REFRESH_TIME)
 

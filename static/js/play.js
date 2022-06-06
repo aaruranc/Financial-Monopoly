@@ -17,6 +17,7 @@ function start_game(){
         success: function (response) {
             
 //            console.log(response); 
+//            console.log('YERRRRRR');
             roll(response);
 
         },
@@ -32,8 +33,10 @@ function start_game(){
 function roll(data){
     
     var player_name = data['player_name'];
-    console.log(data);
-    
+//    console.log(data);
+//    
+//    console.log('YEEEEEET');
+//    
     var confirm = window.confirm(`${player_name} turn to roll`);
     if(confirm === true){
         
@@ -46,14 +49,16 @@ function roll(data){
 
             success: function (response) {
                 
+//                console.log('YEEEEEET');
 //                console.log(response);
-                roll_num = response['roll_num'];
-                position = response['position'];
-                
-                var roll_info = `${player_name} rolled ${roll_num} - Now at ${position}`;
-                var confirm = window.confirm(roll_info);
-                
-                choose_action(response);
+//                roll_num = response['roll_num'];
+//                position = response['position'];
+//                
+//                var roll_info = `${player_name} rolled ${roll_num} - Now at ${position}`;
+//                var confirm = window.confirm(roll_info);
+//                
+//                console.log('YEEEEEET');
+                generate_actions(response);
                 
 
             },
@@ -68,12 +73,16 @@ function roll(data){
 }
 
 
-function choose_action(data){
+function generate_actions(data){
     
     // Player chooses action relative to game state
     // Defining this needs to be scoped out on server side
     // For now just having players move across board
             
+//    console.log('Got HERE');
+//    console.log(data)
+    
+    
     $.ajax({
         url: '/action',
         type: "POST",
@@ -84,7 +93,10 @@ function choose_action(data){
         success: function (response) {
             
 //            console.log(response);
-            roll(response);
+            
+            make_decision(response);
+        
+//            roll(response);
 
         },
         error: function (error) {
@@ -95,11 +107,36 @@ function choose_action(data){
     
     return
     
-    
-    
-    
-    
 }
+
+
+function make_decision(data){
+
+    $.ajax({
+        url: '/decision',
+        type: "POST",
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json;charset=UTF-8',
+
+        success: function (response) {
+            
+            console.log(response);
+            
+//            console.log('SIZZURP')
+
+            roll(response);
+
+        },
+        error: function (error) {
+            console.log(`Error ${error}`);
+        }
+    });  
+    
+
+
+}
+
 
 
 

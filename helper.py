@@ -1,8 +1,9 @@
 import os
+import numpy as np
 import pandas as pd
 from config import * 
 
-
+np.random.seed(304)
 cwd = os.getcwd()
 player_dict = {}
 settings_dict = {}
@@ -13,6 +14,8 @@ class Player:
 		self.name = name
 		self.position = 0
 		self.capital = 0
+		self.orbit = 0
+		self.property = {}
 
 
 class Game:
@@ -27,8 +30,8 @@ class Game:
 
 		def __init__(self):
 			self.board_squares = BOARD_SQUARES
-			self.num_dice = 2
-			self.dice_sides = 6
+			self.num_dice = NUM_DICE
+			self.dice_sides = DICE_SIDES
 
 			df = pd.read_csv(os.path.join(cwd, 'board.csv'))
 			self.squares = {index: self.Square(row) for index, row in df.iterrows()}
@@ -70,7 +73,7 @@ class Game:
 				self.positions = data['position'].to_dict()
 
 
-	def player_action(self, data):
+	def player_actions(self, data):
 
 		player_id = data['current_player']
 		player = player_dict[player_id]
@@ -79,8 +82,10 @@ class Game:
 		# Potential Actions Related to Landing on Square
 
 		board = self.board
-
 		square = board.squares[player_position]
+		options = {}
+
+
 		if square.type in ['Street', 'Railroad', 'Utility']:
 
 			if square.owner:
@@ -88,19 +93,20 @@ class Game:
 				if square.owner != player_id:
 
 					landowner = player_dict[square.owner]
+					rent = square.rent.structure[f'rent_house_{square.houses}'] if square.houses else square.rent.structure['rent']
+					options['rent'] = {'name': square.name,
+									   'owner': square.owner, 
+									   'rent': rent}
 
-					rent = square.rent.structure[f'rent_house_{square.houses}'] if squares.house else square.rent.structure['rent']
 
 			else:
 
-				d = {'name': square.name, 
-					 'monopoly': square.monopoly, 
-					 'price': square.price}
+				options['buy'] = {'name': square.name, 
+								  'monopoly': square.monopoly, 
+								  'price': square.price}
 
 	 	# Potential Actions Related to Player Balance Sheet
-
 	 		# Building Houses on Monopoly Property
-
 	 		# Trading Property
 	 		# Buying/Selling Financial Assets
 	 			# Debt
@@ -115,27 +121,89 @@ class Game:
 	 				# Rights on Property/Monopoly
 	 				# Rights regarding Equity/Credit Sales
 
-
 		else:
 
-			if square.type == 'Idle':
-				x = 1
+			if square.type == 'Idle': 
 
-			elif square.type == 'Chest':
-				x = 1
+				# Go Money, Amount recieved should end up as a setting
+				# Need to have update if passed, ot just on land *
+				if player_position == 0:
+					player.capital += 200
 
-			elif square.type == 'Tax':
-				x = 1
-
-			elif square.type == 'Chance':
-				x = 1
-
+			elif square.type == 'Chest': x = 1
+			elif square.type == 'Tax': x = 1
+			elif square.type == 'Chance': x = 1
 
 
+		options['current_player'] = data['current_player']
+		options['player_name'] = data['player_name']
+		options['position'] = data['position']
+		options['capital'] = data['capital']
+
+		return options
+
+
+	def process_decision(self, data):
+
+		print(data)
+		player_id = data['current_player']
+		player = player_dict[player_id]
+		player_position = player.position
 
 		d = {}
+		if 'rent' in data:
+
+			if data['rent']['rent'] <= player.capital:
+
+
+				name = data['rent']['name']
+				rent = data['rent']['rent']
+
+				player.capital -= data['rent']['rent'] 
+
+				d['consequence'] = f'{player.name} paid {rent} on {name}'
+
+			else:
+
+				# Handle Bankruptcy
+				print(f'{player.name} is Bankrupt !!!!')
+				d['consequence'] = f'{player.name} is bankrupt'
+
+
+		elif 'buy' in data:
+
+			# Buy if Coinflip goes your way
+			if np.random.randint(2):
+				if data['buy']['price'] <= player.capital:
+
+					board = self.board
+					square = board.squares[player_position]
+					square.owner = player_id
+
+					name = square.name
+					price = data['buy']['price']
+
+					player.capital -= data['buy']['price']
+					player.property[square.position] = square.name
+
+
+					d['consequence'] = f'{player.name} bought {name} for {price}'
+
+		# print(d)
+		# print(vars(player))
+
+
+		next_player = (data['current_player'] + 1 ) % self.num_players
+		player = player_dict[next_player]
+
+		
+		d['current_player'] = next_player
+		d['player_name'] = player.name
+		d['position'] = player.position
+		d['capital'] = player.capital
 
 		return d
+
 
 
 
@@ -183,6 +251,19 @@ class Markets:
 					self.maturities = YIELD_CURVE_MATURITIES
 
 					
+
+
+class Settings:
+
+
+	def __init__(self):
+
+		self.initial_capital = 1000
+		self.auction = True
+		self.go_around = True
+
+
+
 
 
 
