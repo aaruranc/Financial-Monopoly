@@ -14,10 +14,7 @@ function start_game(){
         data: JSON.stringify(output),
         contentType: 'application/json;charset=UTF-8',
         
-        success: function (response) {
-            
-//            console.log(response); 
-//            console.log('YERRRRRR');
+        success: function (response) {            
             roll(response);
 
         },
@@ -33,11 +30,8 @@ function start_game(){
 function roll(data){
     
     var player_name = data['player_name'];
-//    console.log(data);
-//    
-//    console.log('YEEEEEET');
-//    
     var confirm = window.confirm(`${player_name} turn to roll`);
+    
     if(confirm === true){
         
         $.ajax({

@@ -16,6 +16,7 @@ class Player:
 		self.capital = 0
 		self.orbit = 0
 		self.property = {}
+		self.monopoly = {}
 
 
 class Game:
@@ -70,7 +71,7 @@ class Game:
 				self.name = data['monopoly'].unique()[0]
 				self.type = data['class'].unique()[0]
 				self.size = data['monopoly_size'].unique()[0]
-				self.positions = data['position'].to_dict()
+				self.positions = list(data['position'])
 
 
 	def player_actions(self, data):
@@ -84,7 +85,6 @@ class Game:
 		board = self.board
 		square = board.squares[player_position]
 		options = {}
-
 
 		if square.type in ['Street', 'Railroad', 'Utility']:
 
@@ -106,6 +106,8 @@ class Game:
 								  'price': square.price}
 
 	 	# Potential Actions Related to Player Balance Sheet
+	 	# Want to Design so that this capacity is asynchronous
+	 	# MAybe restrict callback here to actions tied to dice roll and leave options elsewhere
 	 		# Building Houses on Monopoly Property
 	 		# Trading Property
 	 		# Buying/Selling Financial Assets
@@ -114,7 +116,7 @@ class Game:
 	 				# Credit Market
 	 			# Equity
 	 				# IPO
-	 				# Secondary Market
+	 				# Public / Private Secondary Market
 	 			# Commodity Futures
 	 				# Housing Materials
 	 			# Options
@@ -145,7 +147,6 @@ class Game:
 
 	def process_decision(self, data):
 
-		print(data)
 		player_id = data['current_player']
 		player = player_dict[player_id]
 		player_position = player.position
@@ -178,16 +179,32 @@ class Game:
 
 					board = self.board
 					square = board.squares[player_position]
+					mply = square.monopoly
+					monopoly = board.monopolies[mply]
+
+					# print(vars(monopoly))
+
 					square.owner = player_id
 
 					name = square.name
 					price = data['buy']['price']
-
 					player.capital -= data['buy']['price']
-					player.property[square.position] = square.name
 
+
+					# positions = data['position'].to_dict()
+
+					if monopoly in player.property:
+						player.property[monopoly][square.position] = square.name
+
+					else:
+						
+						player.property[monopoly] = {square.position: square.name}
 
 					d['consequence'] = f'{player.name} bought {name} for {price}'
+
+
+					# Update Monopolies 
+
 
 		# print(d)
 		# print(vars(player))
@@ -207,13 +224,11 @@ class Game:
 
 
 
+
 class Market:
 
 	def __init__(self, name):
 		self.name = name
-
-
-
 
 
 class Markets:
@@ -253,8 +268,8 @@ class Markets:
 					
 
 
-class Settings:
 
+class Settings:
 
 	def __init__(self):
 

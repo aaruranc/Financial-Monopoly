@@ -3,7 +3,6 @@ import time
 import requests
 import threading
 
-
 from config import *
 from helper import *
 from flask import Flask, request, render_template, jsonify
@@ -24,10 +23,8 @@ def initialize():
 		return render_template('main.html')
 
 	elif request.method == 'POST':
-
-		# print('yerr')
+		
 		keys = list(request.form.keys())
-
 		# print(keys)
 
 		for key in keys:
@@ -86,7 +83,7 @@ def loop():
 def roll():
 
 	data = request.get_json()
-	# print('roll', data)
+	print('roll', data)
 
 	player = player_dict[data['current_player']]
 	roll_num = np.random.randint(1, NUM_DICE * DICE_SIDES)
@@ -107,7 +104,7 @@ def roll():
 def action():
 
 	data = request.get_json()
-	# print('action', data)
+	print('action', data)
 
 	player_options = game.player_actions(data)
 
@@ -133,44 +130,58 @@ def action():
 def decision():
 
 	data = request.get_json()
-	# print('decision', data)
+	print('decision', data)
 
 	outcome = game.process_decision(data)
 
+	print('outcome', data)
+
 	return jsonify(outcome)
 
-	return 
+
+
+@app.route("/state", methods=['GET', 'POST'])
+def state():
+
+	if request.method == 'GET':
+		return render_template('state.html')
+
+	elif request.method == 'POST':
+
+		dd = {}
+		for key in player_dict:
+			dd[key] = vars(player_dict[key])
+
+
+		d = {'players': dd}
+
+		return jsonify(d)
 
 
 
 
-
+## Markets Management
 @app.route("/markets", methods=['POST'])
 def test():
-
 	return jsonify('YEET')
 
 
-
 def refresh_markets():
-
 	time.sleep(BUFFER_TIME)
 	while 1:
-
 		r = requests.post(f'http://{HOST}:{PORT}/markets')
-
 		time.sleep(REFRESH_TIME)
-
 	return
-
 
 markets_thread = threading.Thread(target=refresh_markets)
 markets_thread.daemon = True
 
 
+
+
 if __name__ == '__main__':
 	
 	markets_thread.start()
-	app.run(host=HOST, port=PORT, debug=True)
+	app.run(host=SERVER_HOST, port=SERVER_PORT, debug=True)
 	markets_thread.join()
 	
