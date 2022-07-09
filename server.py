@@ -4,7 +4,7 @@ import requests
 import threading
 
 from config import *
-from helper import *
+from server_helper import *
 from flask import Flask, request, render_template, jsonify
 
 
@@ -51,23 +51,20 @@ def play():
 		elif key == 'go_around':
 			settings.go_around = request.form[key]
 
-	# print(vars(settings))
-
-
 	return render_template('play.html')
 
 
 @app.route("/loop", methods=['POST'])
 def loop():
 
-	
+	# This endpoint is probably redundant since it's only hit once
+	# Better design is to handle in /roll with intialization if block
+
 	data = request.get_json()
 	# print('loop', data)
 
 	d = {}
-	if data['state'] == 'not started':
-		curr_player = 0
-
+	if data['state'] == 'not started': curr_player = 0
 
 	player = player_dict[curr_player]
 	d['current_player'] = curr_player
@@ -149,9 +146,12 @@ def state():
 	elif request.method == 'POST':
 
 		dd = {}
-		for key in player_dict:
-			dd[key] = vars(player_dict[key])
+		for pl in player_dict:
+			dd[pl] = vars(player_dict[pl])
 
+			# Can't Jsonify Custom Objects, Handle Processing Better
+			if 'property' in dd[pl]:
+				del dd[pl]['property']
 
 		d = {'players': dd}
 
@@ -169,7 +169,7 @@ def test():
 def refresh_markets():
 	time.sleep(BUFFER_TIME)
 	while 1:
-		r = requests.post(f'http://{HOST}:{PORT}/markets')
+		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/markets')
 		time.sleep(REFRESH_TIME)
 	return
 

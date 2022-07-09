@@ -128,7 +128,7 @@ class Game:
 			if square.type == 'Idle': 
 
 				# Go Money, Amount recieved should end up as a setting
-				# Need to have update if passed, ot just on land *
+				# Need to have update if passed, not just on land ***
 				if player_position == 0:
 					player.capital += 200
 
