@@ -18,6 +18,20 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def initialize():
 
+	
+	
+	# if SIMULATION:
+
+		# data = r.json()		
+		# for key in data:
+		# 	player_dict[int(key)] = Player(data[key])
+		# game.num_players = len(data)
+		# return 'Initialized Players'		
+	
+	print('GOT HERE')
+	print(request.form)
+	print(request.data)
+
 	if request.method == 'GET':
 		# print('yeet')
 		return render_template('main.html')
@@ -32,11 +46,23 @@ def initialize():
 
 		game.num_players = len(keys)
 
+
+	# Server Based Simulation
+	if SIMULATION:
+		return 'Initialized Players'
+	
+	# Web Based Play
+	else:
 		return render_template('settings.html')
+
 
 
 @app.route("/play", methods=['POST'])
 def play():
+
+
+	print(request.form)
+
 
 	# Process Settings and Update Player Dict and Game Object
 	# Cleaner way to update? (re: auction/go_around)

@@ -40,6 +40,8 @@ function player_form(){
     form.appendChild(submit);
     form.action = action;
     form.method = 'post';
+//
+//    console.log(form)
     
     return
 }
