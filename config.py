@@ -19,3 +19,10 @@ NASDAQ_API_KEY = '7Co5zu-KeVjbDdv82sqs'
 
 
 SIMULATION = True
+
+DEFAULT_PLAYERS = {'0': 'Dalio', 
+				   '1': 'Soros'}
+
+DEFAULT_SETTINGS = {'initial_capital': '1000', 
+					'auction': '1',
+					'go_around': '1'}

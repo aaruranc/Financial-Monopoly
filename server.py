@@ -18,8 +18,6 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def initialize():
 
-	
-	
 	# if SIMULATION:
 
 		# data = r.json()		
@@ -28,9 +26,9 @@ def initialize():
 		# game.num_players = len(data)
 		# return 'Initialized Players'		
 	
-	print('GOT HERE')
-	print(request.form)
-	print(request.data)
+	print('YERRRR')
+	print(request.json)
+	# print(request.data)
 
 	if request.method == 'GET':
 		# print('yeet')
@@ -39,16 +37,24 @@ def initialize():
 	elif request.method == 'POST':
 		
 		keys = list(request.form.keys())
-		# print(keys)
+		print(keys)
 
 		for key in keys:
 			player_dict[int(key)] = Player(request.form[key])
 
+		print('MODIFIED PLAYER DICT')
+
 		game.num_players = len(keys)
+
+		print(game)
+		print(vars(game))
 
 
 	# Server Based Simulation
 	if SIMULATION:
+
+		print(player_dict)
+
 		return 'Initialized Players'
 	
 	# Web Based Play
@@ -62,8 +68,6 @@ def play():
 
 
 	print(request.form)
-
-
 	# Process Settings and Update Player Dict and Game Object
 	# Cleaner way to update? (re: auction/go_around)
 	# print(request.form)
@@ -77,9 +81,16 @@ def play():
 		elif key == 'go_around':
 			settings.go_around = request.form[key]
 
-	return render_template('play.html')
+	# Server Based Simulation
+	if SIMULATION:
+		return 'Initialized Settings'
+	
+	# Web Based Play
+	else:
+		return render_template('play.html')
 
 
+# Redundant Design, could be structured as a better API call
 @app.route("/loop", methods=['POST'])
 def loop():
 
@@ -89,17 +100,24 @@ def loop():
 	data = request.get_json()
 	# print('loop', data)
 
+	print('DEEZNUTS')
+
 	d = {}
-	if data['state'] == 'not started': curr_player = 0
+	if SIMULATION:
 
-	player = player_dict[curr_player]
-	d['current_player'] = curr_player
-	d['player_name'] = player.name
-	d['position'] = player.position
-	d['capital'] = player.capital
+		print(player_dict)
 
 
-	return jsonify(d)
+		return jsonify(player_dict)
+
+	else:
+		if data['state'] == 'not started': curr_player = 0
+		player = player_dict[curr_player]
+		d['current_player'] = curr_player
+		d['player_name'] = player.name
+		d['position'] = player.position
+		d['capital'] = player.capital
+		return jsonify(d)
 
 
 @app.route("/roll", methods=['POST'])

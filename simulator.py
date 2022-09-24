@@ -18,21 +18,29 @@ def status():
 	
 	if SIMULATION:
 
-		
-		player_d = {'0': 'Dalio', 
-					'1': 'Soros'}
-
-
-
 		print('YEEEET')
-		x = json.dumps(player_d)
+		x = json.dumps(DEFAULT_PLAYERS)
+		print(x, type(x))
+		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/', x)
+		response = r.text
+		print(response)
 
-		print(x)
+		if response != 'Initialized Players': 
+			return 'Unable to Initialize Players'
 
-		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/initialize', x)
-		print(r)
-		# data = r.text()
- 
+		x = json.dumps(DEFAULT_SETTINGS)
+		print(x, type(x))
+		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/play', x)
+		response = r.text
+		print(response)
+
+		if response != 'Initialized Settings': 
+			return 'Unable to Initialize Settings'
+
+		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/loop', json.dumps({}))
+		response = r.text
+		print(response)
+
 
 		return f'Simulating up at {now}'
 
@@ -40,42 +48,6 @@ def status():
 	else: 
 		
 		return f'Not simulating at {now}'
-
-
-@app.route("/players", methods=['GET', 'POST'])
-def players():
-
-	player_d = {'0': 'Dalio', 
-				'1': 'Soros'}
-
-	return jsonify(player_d)
-
-
-
-@app.route("/settings", methods=['GET', 'POST'])
-def settings():
-
-	settings_d = {'initial_capital': '1000', 
-				  'auction': '1',
-				  'go_around': '1'}
-
-	return jsonify(settings_d)
-
-
-
-
-
-	# r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/initialize', jsonify(player_d))
-	# print(r.text)
-
-
-	
-
-
-	# return 'yeet'
-
-
-
 
 
 if __name__ == '__main__':
