@@ -4,7 +4,7 @@ import requests
 import threading
 
 from config import *
-from server_helper import *
+from helper_server import *
 from flask import Flask, request, render_template, jsonify
 
 
@@ -17,44 +17,22 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
 def initialize():
-
-	# if SIMULATION:
-
-		# data = r.json()		
-		# for key in data:
-		# 	player_dict[int(key)] = Player(data[key])
-		# game.num_players = len(data)
-		# return 'Initialized Players'		
 	
 	print('YERRRR')
-	print(request.json)
-	# print(request.data)
 
 	if request.method == 'GET':
-		# print('yeet')
 		return render_template('main.html')
 
 	elif request.method == 'POST':
 		
-		keys = list(request.form.keys())
-		print(keys)
+		data = json.loads(request.data)
+		game.num_players = len(data)
 
-		for key in keys:
-			player_dict[int(key)] = Player(request.form[key])
-
-		print('MODIFIED PLAYER DICT')
-
-		game.num_players = len(keys)
-
-		print(game)
-		print(vars(game))
-
+		for key in data:
+			player_dict[int(key)] = Player(data[key])
 
 	# Server Based Simulation
 	if SIMULATION:
-
-		print(player_dict)
-
 		return 'Initialized Players'
 	
 	# Web Based Play
@@ -66,20 +44,19 @@ def initialize():
 @app.route("/play", methods=['POST'])
 def play():
 
-
-	print(request.form)
 	# Process Settings and Update Player Dict and Game Object
 	# Cleaner way to update? (re: auction/go_around)
-	# print(request.form)
-	for key in list(request.form.keys()):
-		settings_dict[key] = request.form[key]
+
+	data = json.loads(request.data)
+	for key in data:
+		settings_dict[key] = data[key]
 		if key == 'initial_capital':
 			for pl in player_dict:
-				player_dict[pl].capital = int(request.form[key])
+				player_dict[pl].capital = int(data[key])
 		elif key == 'auction':
-			settings.auction = request.form[key]
+			settings.auction = data[key]
 		elif key == 'go_around':
-			settings.go_around = request.form[key]
+			settings.go_around = data[key]
 
 	# Server Based Simulation
 	if SIMULATION:
@@ -97,33 +74,24 @@ def loop():
 	# This endpoint is probably redundant since it's only hit once
 	# Better design is to handle in /roll with intialization if block
 
-	data = request.get_json()
+	d = {}
+	data = json.loads(request.data)
 	# print('loop', data)
 
-	print('DEEZNUTS')
-
-	d = {}
-	if SIMULATION:
-
-		print(player_dict)
-
-
-		return jsonify(player_dict)
-
-	else:
-		if data['state'] == 'not started': curr_player = 0
-		player = player_dict[curr_player]
-		d['current_player'] = curr_player
-		d['player_name'] = player.name
-		d['position'] = player.position
-		d['capital'] = player.capital
-		return jsonify(d)
+	if data['state'] == 'not started': curr_player = 0
+	player = player_dict[curr_player]
+	d['current_player'] = curr_player
+	d['player_name'] = player.name
+	d['position'] = player.position
+	d['capital'] = player.capital
+	
+	return jsonify(d)
 
 
 @app.route("/roll", methods=['POST'])
 def roll():
 
-	data = request.get_json()
+	data = json.loads(request.data)
 	print('roll', data)
 
 	player = player_dict[data['current_player']]
@@ -135,6 +103,9 @@ def roll():
 	if new_position >= BOARD_SQUARES:
 		new_position = new_position % BOARD_SQUARES
 
+		# Add Go Money for going around board
+		player.capital += GO_MONEY
+
 	# Setting internal player position before user notification
 	data['position'] = player.position = new_position
 
@@ -144,7 +115,7 @@ def roll():
 @app.route("/action", methods=['POST'])
 def action():
 
-	data = request.get_json()
+	data = json.loads(request.data)
 	print('action', data)
 
 	player_options = game.player_actions(data)
@@ -170,9 +141,10 @@ def action():
 @app.route("/decision", methods=['POST'])
 def decision():
 
-	data = request.get_json()
+	data = json.loads(request.data)
 	print('decision', data)
 
+	# Current Implementation Randomizes Buying
 	outcome = game.process_decision(data)
 
 	print('outcome', data)
@@ -210,14 +182,14 @@ def test():
 	return jsonify('YEET')
 
 
-def refresh_markets():
-	time.sleep(BUFFER_TIME)
+def update_markets():
+	time.sleep(MARKETS_BUFFER_TIME)
 	while 1:
 		r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/markets')
 		time.sleep(REFRESH_TIME)
 	return
 
-markets_thread = threading.Thread(target=refresh_markets)
+markets_thread = threading.Thread(target=update_markets)
 markets_thread.daemon = True
 
 

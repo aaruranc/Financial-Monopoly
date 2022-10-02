@@ -130,7 +130,7 @@ class Game:
 				# Go Money, Amount recieved should end up as a setting
 				# Need to have update if passed, not just on land ***
 				if player_position == 0:
-					player.capital += 200
+					player.capital += GO_MONEY
 
 			elif square.type == 'Chest': x = 1
 			elif square.type == 'Tax': x = 1
@@ -173,7 +173,7 @@ class Game:
 
 		elif 'buy' in data:
 
-			# Buy if Coinflip goes your way
+			# Buy if Coinflip Winner
 			if np.random.randint(2):
 				if data['buy']['price'] <= player.capital:
 
@@ -202,7 +202,6 @@ class Game:
 
 					d['consequence'] = f'{player.name} bought {name} for {price}'
 
-
 					# Update Monopolies 
 
 
@@ -218,6 +217,7 @@ class Game:
 		d['player_name'] = player.name
 		d['position'] = player.position
 		d['capital'] = player.capital
+		# d['properties'] = vars(player.property)
 
 		return d
 

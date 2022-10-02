@@ -1,3 +1,13 @@
+# Datetime Info
+import datetime as dtm
+from pytz import timezone
+
+EST = timezone('US/Eastern')
+fmt = '%Y-%m-%d %H:%M:%S'
+def currentTime(string=True):
+    if string: return dtm.datetime.now(EST).strftime(fmt)
+    else: return dtm.datetime.now(EST)
+
 SERVER_HOST = '127.0.0.1'
 SERVER_PORT = 5000
 
@@ -7,10 +17,14 @@ SIMULATOR_PORT = 5001
 BOARD_SQUARES = 40
 NUM_DICE = 2
 DICE_SIDES = 6
-INITIAL_CAPITAL = 2000
 
-BUFFER_TIME = 2
+INITIAL_CAPITAL = 2000
+GO_MONEY = 50
+
+MARKETS_BUFFER_TIME = 2
+AGENTS_BUFFER_TIME = 1
 REFRESH_TIME = 1000
+SIMULATE_TIME = .1
 
 YIELD_CURVE_MATURITIES = [1, 2, 5, 10, 20, 30, 50, 100]
 YIELD_CURVE_STARTING_YIELDS =  None
@@ -19,6 +33,7 @@ NASDAQ_API_KEY = '7Co5zu-KeVjbDdv82sqs'
 
 
 SIMULATION = True
+SIMULATOR_LOG_FILE = 'simulator.log'
 
 DEFAULT_PLAYERS = {'0': 'Dalio', 
 				   '1': 'Soros'}
@@ -26,3 +41,5 @@ DEFAULT_PLAYERS = {'0': 'Dalio',
 DEFAULT_SETTINGS = {'initial_capital': '1000', 
 					'auction': '1',
 					'go_around': '1'}
+
+
