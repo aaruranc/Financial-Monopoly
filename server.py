@@ -11,7 +11,7 @@ from flask import Flask, request, render_template, jsonify
 np.random.seed(6)
 
 game = Game()
-markets = Markets()
+cm = CapitalMarkets()
 settings = Settings() 
 app = Flask(__name__)
 

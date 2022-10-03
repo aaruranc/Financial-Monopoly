@@ -44,8 +44,8 @@ def status():
 		# print(r); print(response)
 		if response != 'Initialized Settings':  return 'Unable to Initialize Settings'
 
-		# Initialize Players
-		AGENTS['Dalio'] = Agent('Dalio')
+		# Initialize Agents
+		AGENTS['Dalio'] = Agent('Dalio', DEFAULT_SETTINGS)
 
 		# Initialize Game Loop
 		data = {'state': 'not started'}
@@ -66,7 +66,7 @@ def status():
 
 ## Simulation Management
 @app.route("/simulate", methods=['POST'])
-def test():
+def sim():
 
 	# print(deque)
 	to_process = []
@@ -76,7 +76,6 @@ def test():
 	for update in to_process:
 
 		if update[0] == 'game':
-
 
 			# Get Initial Roll
 			r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/roll', json.dumps(update[1]))
@@ -113,15 +112,9 @@ def simulate():
 
 	return
 
-	
-
-
-	# time.sleep(SIMULATE_TIME)
-	# return
 
 simulator_thread = threading.Thread(target=simulate)
 simulator_thread.daemon = True
-
 
 
 if __name__ == '__main__':
@@ -129,27 +122,4 @@ if __name__ == '__main__':
 	simulator_thread.start()
 	app.run(host=SIMULATOR_HOST, port=SIMULATOR_PORT, debug=True)
 	simulator_thread.join()
-
-
-
-# def update_markets():
-# 	time.sleep(MARKETS_BUFFER_TIME)
-	# while 1:
-	# 	r = requests.post(f'http://{SERVER_HOST}:{SERVER_PORT}/markets')
-	# 	time.sleep(REFRESH_TIME)
-	# return
-
-# markets_thread = threading.Thread(target=update_markets)
-# markets_thread.daemon = True
-
-
-
-
-# if __name__ == '__main__':
-	
-# 	markets_thread.start()
-# 	app.run(host=SERVER_HOST, port=SERVER_PORT, debug=True)
-# 	markets_thread.join()
-	
-
 

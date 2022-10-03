@@ -224,30 +224,42 @@ class Game:
 
 
 
-
 class Market:
 
 	def __init__(self, name):
 		self.name = name
 
+		class Exchange:
 
-class Markets:
+			def __init__(self):
+				self.x = 1
 
+			class Transaction:
+
+				def __init__(self):
+					self.x = 1
+
+				class Contract:
+
+					def __init__(self):
+						self.x = 1
+
+
+class CapitalMarkets:
 
 	def __init__(self):
-		self.markets = {'bond': self.BondMarket()}
-
+		self.markets = {}
 
 	def update(self):
 		for market in self.markets:
 			self.markets[market].update()
 		return
 
-
-	class BondMarket(Market):
+	
+	class Bonds(Market):
 
 		def __init__(self):
-			super().__init__('Bond')
+			super().__init__('Bonds')
 
 
 		def update(self):
@@ -259,13 +271,238 @@ class Markets:
 			def __init__(self):
 				self.x = 1
 
-
 			class YieldCurve:
 
 				def __init__(self):
 					self.maturities = YIELD_CURVE_MATURITIES
 
-					
+		class Mortgage:
+
+			def __init__(self):
+				self.x = 1
+
+
+		class Credit:
+
+			def __init__(self):
+				self.x = 1
+
+
+		class Repo:
+
+			def __init__(self):
+				self.x = 1
+
+	class Commodities(Market):
+
+		def __init__(self):
+			super().__init__('Bonds')
+
+
+		def update(self, Bonds):
+			return
+
+	class Labor(Market):
+
+		def __init__(self):
+			super().__init__('Labor')
+
+	class RealEstate(Market):
+
+		def __init__(self):
+			super().__init__('Real Estate')
+
+
+		def update(self, Bonds, Commodities, Labor):
+			return
+
+	class Stocks(Market):
+
+		def __init__(self):
+			super().__init__('Stocks')
+
+		class DCF:
+
+			def __init__(self, Bonds):
+				self.x = 1
+
+		class IPO:
+
+			def __init__(self, Bonds):
+				self.x = 1
+
+		class LBO:
+
+			def __init__(self, Bonds):
+				self.x = 1	
+
+		def update(self, Bonds, RealEstate):
+			return
+
+	class Derivatives(Market):
+
+		def __init__(self):
+			super().__init__('Derivatives')
+
+
+		def update(self, Bonds, Commodities, RealEstate, Stocks, Labor, Industry):
+			return
+
+		class Fund:
+
+			def __init__(self):
+				self.x = 1
+	
+		class Future:
+
+			def __init__(self):
+				self.x = 1
+
+		class Option:
+
+			def __init__(self):
+				self.x = 1
+
+		class Swap:
+
+			def __init__(self):
+				self.x = 1	
+
+			class CDS:
+
+				def __init__(self):
+					self.x = 1
+
+
+class Finance:
+
+	def __init__(self):
+		self.x = 1
+		self.exuberance = 3		
+
+	class Business:
+
+		def __init__(self):
+			self.x = 1
+
+	class CentralBank:
+
+		def __init__(self):
+			self.x = 1
+			self.hubris = 10
+			self.easy_money = 5
+			self.chairman = 'Greenspan'
+
+		def quantitative_easing(self):
+			return 
+
+		def rate_change(self):
+			return 
+
+	class InvestmentBank:
+
+		def __init__(self):
+			self.x = 1
+			self.credit_creation = 7
+
+		class PrimeBroker:
+
+			def __init__(self):
+				self.x = 1
+
+	class Investor:
+
+		def __init__(self):
+			self.x = 1
+			self.leverage = 2.5
+
+		class PrivateEquity:
+
+			def __init__(self):
+				self.x = 1
+
+		class VentureCapital:
+
+			def __init__(self):
+				self.x = 1
+
+		class HedgeFund:
+
+			def __init__(self):
+				self.x = 1
+
+		class PensionFund:
+
+			def __init__(self):
+				self.x = 1
+
+		class ETFIssuer:
+
+			def __init__(self):
+				self.x = 1
+
+	class MarketMaker:
+
+		def __init__(self):
+			self.x = 1
+			self.arbitrageur = .9
+			self.prop = .7
+
+	class Auditor:
+
+		def __init__(self):
+			self.x = 1
+
+	class Regulator:
+
+		def __init__(self):
+			self.x = 1
+
+
+class World:
+
+	def __init__(self):
+		self.x = 1
+		self.stability = 0
+
+	class Industry:
+
+		def __init__(self):
+			self.x = 1
+
+		class Resource:
+
+			def __init__(self):
+				self.x = 1
+
+	class Volksgeist:
+
+		def __init__(self):
+			self.x = 1
+			self.redistribution = 5
+
+		class Government:
+
+			def __init__(self):
+				self.x = 1
+				self.bribery = 4
+
+	class Weitgeist:
+
+		def __init__(self):
+			self.x = 1
+			self.natural_disaster = 3
+
+	class Zeitgeist:
+
+		def __init__(self):
+			self.x = 1
+			self.cooperation = .8
+
+		class Culture:
+
+			def __init__(self):
+				self.x = 1
 
 
 
@@ -276,32 +513,4 @@ class Settings:
 		self.initial_capital = 1000
 		self.auction = True
 		self.go_around = True
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
 
