@@ -389,7 +389,7 @@ class Finance:
 		def __init__(self):
 			self.x = 1
 			self.hubris = 10
-			self.easy_money = 5
+			self.easy_money = 9
 			self.chairman = 'Greenspan'
 
 		def quantitative_easing(self, Bonds):
