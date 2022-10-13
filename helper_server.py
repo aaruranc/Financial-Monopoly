@@ -261,7 +261,6 @@ class CapitalMarkets:
 		def __init__(self):
 			super().__init__('Bonds')
 
-
 		def update(self):
 			return
 
@@ -299,7 +298,7 @@ class CapitalMarkets:
 			super().__init__('Bonds')
 
 
-		def update(self, Bonds):
+		def update(self, Bonds, Industry):
 			return
 
 	class Labor(Market):
@@ -393,10 +392,13 @@ class Finance:
 			self.easy_money = 5
 			self.chairman = 'Greenspan'
 
-		def quantitative_easing(self):
+		def quantitative_easing(self, Bonds):
 			return 
 
-		def rate_change(self):
+		def rate_change(self, Bonds, magnitude=.25):
+			return 
+
+		def yield_curve_control(self, Bonds, maturity, rate):
 			return 
 
 	class InvestmentBank:
@@ -493,6 +495,11 @@ class World:
 			self.x = 1
 			self.natural_disaster = 3
 
+		class GlobalWarming:
+
+			def __init__(self):
+				self.x = 1			
+
 	class Zeitgeist:
 
 		def __init__(self):
@@ -510,7 +517,7 @@ class Settings:
 
 	def __init__(self):
 
-		self.initial_capital = 1000
+		self.initial_capital = INITIAL_CAPITAL
 		self.auction = True
 		self.go_around = True
 

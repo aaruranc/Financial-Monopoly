@@ -43,6 +43,26 @@ class Communication:
 	def __init__(self):
 		self.x = 1
 
+class Conversation:
+
+	def __init__(self):
+		self.x = 1
+
+	class Presupposition:
+
+		def __init__(self):
+			self.x = 1
+
+	class Metadata:
+
+		def __init__(self):
+			self.x = 1
+
+	class AttitudeCluster:
+
+		def __init__(self):
+			self.x = 1
+
 
 
 class Agent:
@@ -64,10 +84,10 @@ class Agent:
 		def __init__(self):
 			self.x = 1
 
-	class Default:
+		class Default:
 
-		def __init__(self):
-			self.x = 1
+			def __init__(self):
+				self.x = 1
 
 	class Belief:
 
@@ -84,6 +104,11 @@ class Agent:
 				class History:
 
 					def __init__(self):
+						self.x = 1
+
+					class Chain:
+
+						def __init__(self):
 						self.x = 1
 
 			def __init__(self):
@@ -131,26 +156,6 @@ class Agent:
 				self.cooperation_score = 0
 
 
-
-class Conversation:
-
-	def __init__(self):
-		self.x = 1
-
-	class Presupposition:
-
-		def __init__(self):
-			self.x = 1
-
-	class Metadata:
-
-		def __init__(self):
-			self.x = 1
-
-	class Attitude:
-
-		def __init__(self):
-			self.x = 1
 
 class Plan:
 
