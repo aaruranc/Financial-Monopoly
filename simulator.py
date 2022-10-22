@@ -45,7 +45,12 @@ def status():
 		if response != 'Initialized Settings':  return 'Unable to Initialize Settings'
 
 		# Initialize Agents
-		AGENTS['Dalio'] = Agent('Dalio', DEFAULT_SETTINGS)
+		AGENTS['Dalio'] = Agent('Dalio', AGENT_SETTINGS)
+
+		# Test Agent Behavior
+		
+		
+
 
 		# Initialize Game Loop
 		data = {'state': 'not started'}

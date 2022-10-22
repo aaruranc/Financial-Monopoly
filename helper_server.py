@@ -287,7 +287,7 @@ class CapitalMarkets:
 				self.x = 1
 
 
-		class Repo:
+		class Repo():
 
 			def __init__(self):
 				self.x = 1
@@ -445,7 +445,7 @@ class Finance:
 
 	class MarketMaker:
 
-		def __init__(self):
+		def __init__(self, PrimeBroker):
 			self.x = 1
 			self.arbitrageur = .9
 			self.prop = .7

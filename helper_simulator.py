@@ -64,6 +64,15 @@ class Conversation:
 			self.x = 1
 
 
+class Node(object):
+    def __init__(self, data):
+        self.data = data
+        self.children = []
+
+    def add_child(self, obj):
+        self.children.append(obj)
+
+
 
 class Agent:
 
@@ -72,12 +81,32 @@ class Agent:
 		self.name = name
 		self.risk_tolerance = 9
 
+
+		# Initialize tree representation to embed possible worlds
+
+		# Depth Hardcoded
+		# We can fix width but need to ensure that is compatible with semantic embedding
+		# At each node in the tree, we iterate thorugh the range of potential actions
+		# The range of [viable] actions is a relative to a given state
+		# Does this require a map of a state to a range of action
+		# CAn think of actions have a minimal viability instead of requireing a complete state of inforamtion
+		# i.e. if {X, Y, ...} True than can reasoanbly execute Æ
+
+		# Prior to semantic embedding, we still need to fix an arbitray container
+		# Or do we need to define the language first to scope actions?
+
+		root = Node(5)
+		for i in range(settings['tree_depth']):
+
+			# Iterate through action
+
+
+
 	def socialize(self, counterparty_type, cpty):
 		return
 
 	def learn(self, topic):
 		return
-
 
 	class Action:
 
@@ -89,12 +118,14 @@ class Agent:
 			def __init__(self):
 				self.x = 1
 
-	class Belief:
+	class Information:
 
-		def __init__(self):
-			self.x = 1
+		self.x = 1
 
 		class KnowledgeRepresentation:
+
+			def __init__(self):
+				self.x = 1
 
 			class Atlas:
 
@@ -111,8 +142,10 @@ class Agent:
 						def __init__(self):
 							self.x = 1
 
-			def __init__(self):
-				self.x = 1
+			class Belief:
+
+				def __init__(self):
+					self.x = 1
 
 		def belief_generation(self):
 			return
@@ -120,29 +153,34 @@ class Agent:
 		def semantic_mapping(self):
 			return
 
+	class Motivation:
 
-	class Desire:
+		self.x = 1
 
-		def __init__(self):
-			self.x = 1
+		class Desire:
 
-	class Intention:
+			def __init__(self):
+				self.x = 1
 
-		def __init__(self):
-			self.x = 1
+		class Intention:
 
-		def KR_partition(self, KR, intention):
-			return
+			def __init__(self):
+				self.x = 1
 
-	class Obligation:
+			def KR_partition(self, KR, intention):
+				return
 
-		def __init__(self):
-			self.x = 1
+		class Obligation:
+
+			def __init__(self):
+				self.x = 1
+
 
 	class ControlLoop:
 
 		def __init__(self):
 			self.x = 1
+
 
 	class Tracker:
 		
