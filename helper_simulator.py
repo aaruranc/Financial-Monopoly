@@ -109,7 +109,7 @@ class Agent:
 					class Chain:
 
 						def __init__(self):
-						self.x = 1
+							self.x = 1
 
 			def __init__(self):
 				self.x = 1
